@@ -1,0 +1,90 @@
+#include <LiquidCrystal.h>
+int redled = 10;
+int greenled = 8;
+int button = 7;
+int button1 = 6;
+int space1 = 0;
+int space2 = 0;
+int currentfloor = 1;
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+#include <Servo.h>
+Servo myservo;  // create Servo object to control a servo
+
+void setup()
+{
+  pinMode(13, OUTPUT); 
+  pinMode(redled, OUTPUT);
+  pinMode(greenled, OUTPUT);
+  pinMode(button, INPUT);
+  pinMode(button1, INPUT);
+  lcd.begin(13, 2);
+  lcd.print("Good Day");
+  delay(1000);
+  lcd.clear();
+  Serial.begin(9600);
+   myservo.attach(9);
+   myservo.write(90);
+  delay(15);
+}
+
+void loop()
+{ 
+  int buttonState = digitalRead(7);
+  int buttonout = digitalRead(6);
+  if(buttonState == HIGH && space1 < 3) {
+    Serial.print("floor 1 spaces: ");
+    Serial.println(space1);
+    delay(100);
+    digitalWrite(greenled, HIGH);
+    myservo.write(0);
+    delay(15);
+    digitalWrite(redled, LOW);
+    lcd.setCursor(0,0);
+    lcd.print("1st floor");
+    lcd.setCursor(1, 1);
+    lcd.print("Car Park");
+    space1 +=1;
+    delay(5000);
+    myservo.write(0);
+    delay(15);
+    lcd.clear();
+  }
+   else if(buttonState == HIGH && space2 < 3){
+    Serial.print("floor 2 spaces: ");
+    Serial.println(space2);
+    lcd.setCursor(0,0);
+    lcd.print("2nd floor");
+    lcd.setCursor(1, 1);
+    lcd.print("Car Park");
+    space2 +=1;
+    delay(5000);
+    lcd.clear();
+    }
+    else if(buttonState == HIGH && space2 == 3 && space1 ==3){
+    lcd.setCursor(0,0);
+    lcd.print("No space");
+      digitalWrite(13, HIGH);
+    delay(6000);
+    lcd.clear();
+  }
+  if(buttonState == LOW && buttonout == LOW){
+    digitalWrite(redled, HIGH);
+    digitalWrite(greenled, LOW);
+    lcd.setCursor(0,0);
+  	lcd.print("Welcome to Park");
+    lcd.setCursor(1, 1);
+  	lcd.print("10cent/hour");
+    delay(1000);
+    myservo.write(90);
+    lcd.clear();
+  }
+  if(buttonout == HIGH){
+  	lcd.setCursor(0,0);
+    lcd.print("1 car out");
+    space1 -=1;
+    delay(3000);
+    myservo.write(360);
+    lcd.clear();
+  }
+  
+}
